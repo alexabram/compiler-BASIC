@@ -1,4 +1,5 @@
 import enum
+import sys
 
 
 class Lexer:
@@ -27,11 +28,12 @@ class Lexer:
 
     # Invalid token found, print error message and exit.
     def abort(self, message):
-        pass
+        sys.exit("Lexing error. " + message)
 
     # Skip whitespace except newlines, which we will use to indicate the end of a statement.
     def skipWhitespace(self):
-        pass
+        while self.curChar == " " or self.curChar == "\t" or self.curChar == "\r":
+            self.nextChar()
 
     # Skip comments in the code.
     def skipComment(self):
@@ -39,25 +41,29 @@ class Lexer:
 
     # Return the next token.
     def getToken(self):
+        self.skipWhitespace()
+        token = None
+
         # Check the first character of this token to see if we can decide what it is.
         # If it is a multiple character operator (e.g., !=), number, identifier, or keyword then we will process the rest.
         if self.curChar == "+":
-            pass  # Plus token.
+            token = Token(self.curChar, TokenType.PLUS)
         elif self.curChar == "-":
-            pass  # Minus token.
+            token = Token(self.curChar, TokenType.MINUS)
         elif self.curChar == "*":
-            pass  # Asterisk token.
+            token = Token(self.curChar, TokenType.ASTERISK)
         elif self.curChar == "/":
-            pass  # Slash token.
+            token = Token(self.curChar, TokenType.SLASH)
         elif self.curChar == "\n":
-            pass  # Newline token.
+            token = Token(self.curChar, TokenType.NEWLINE)
         elif self.curChar == "\0":
-            pass  # EOF token.
+            token = Token("", TokenType.EOF)
         else:
             # Unknown token!
-            pass
+            self.abort("Unknown token: " + self.curChar)
 
         self.nextChar()
+        return token
 
 
 # Token contains the original text and the type of token.
